@@ -16,14 +16,15 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "8081:80"  # Changed to 8081 to avoid conflict with Jenkins(8080)
+      - "8081:80"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ~/nginx/conf.d:/etc/nginx/conf.d  # Use the correct path
     depends_on:
       - api
     networks:
       - app_network
     restart: unless-stopped
+
 
 networks:
   app_network:
