@@ -17,13 +17,12 @@ services:
     image: nginx:latest
     ports:
       - "8081:80"
-    volumes:
-      - ~/nginx/conf.d:/etc/nginx/conf.d  # Use the correct path
     depends_on:
       - api
     networks:
       - app_network
     restart: unless-stopped
+
 
 
 networks:
