@@ -80,7 +80,7 @@ pipeline {
                     sleep(5)
                     
                     // Restart Nginx to ensure it's using the new config
-                    sh 'docker exec -it fapi-nginx-1 nginx -s reload || true'
+                    sh 'docker exec  fapi-nginx-1 nginx -s reload || true'
                 }
             }
         }
@@ -89,7 +89,7 @@ pipeline {
             steps {
                 script {
                     // Check if default.conf is present in the Nginx container
-                    sh 'docker exec -it fapi-nginx-1 ls -l /etc/nginx/conf.d/'
+                    sh 'docker exec  fapi-nginx-1 ls -l /etc/nginx/conf.d/'
                     
                     // Test if Nginx is correctly forwarding requests
                     sh 'curl -I http://localhost:8081 || true'
