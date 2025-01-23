@@ -5,6 +5,8 @@ services:
     build: .
     expose:
       - "8000"
+    volumes:
+      - ./app:/app/app
     environment:
       - DIFY_API_KEY=${DIFY_API_KEY}
     networks:
@@ -14,7 +16,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "80:80"
+      - "8081:80"  # Changed to 8081 to avoid conflict with Jenkins(8080)
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
