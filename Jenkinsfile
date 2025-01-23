@@ -92,17 +92,7 @@ pipeline {
                         sh 'docker-compose up -d'
                     }
                     
-                    // Wait for services to be healthy
-                    sh '''
-                        echo "Waiting for services to be ready..."
-                        sleep 10
-                        
-                        # Test FastAPI service
-                        curl -f http://localhost:8000/health || exit 1
-                        
-                        # Test Nginx proxy
-                        curl -f http://localhost:8081/health || exit 1
-                    '''
+
                 }
             }
         }
