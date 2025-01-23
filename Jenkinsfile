@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_IMAGE = 'your-image-name'
+        DOCKER_IMAGE = 'image-analysis-api'
         DOCKER_TAG = "${env.BUILD_NUMBER}"
         DIFY_API_KEY = credentials('dify-api-key')
     }
@@ -17,21 +17,28 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 script {
-                    // Create .env file
-                    sh """
-                    cat > .env << EOL
-                    DIFY_API_KEY=${DIFY_API_KEY}
-                    EOL
-                    """
+                    // Create .env file securely
+                    withCredentials([string(credentialsId: 'dify-api-key', variable: 'DIFY_API_KEY')]) {
+                        writeFile file: '.env', text: "DIFY_API_KEY=${DIFY_API_KEY}"
+                    }
                     
-                    // Create SSL directory
-                    sh 'mkdir -p nginx/ssl'
+                    // Create nginx configuration directory
+                    sh 'mkdir -p nginx/conf.d'
                     
-                    // Copy SSL certificates
-                    sh '''
-                    sudo cp /etc/letsencrypt/live/your-domain.com/fullchain.pem nginx/ssl/your-cert.pem
-                    sudo cp /etc/letsencrypt/live/your-domain.com/privkey.pem nginx/ssl/your-key.pem
-                    sudo chown -R jenkins:jenkins nginx/ssl
+                    // Create default nginx configuration
+                    writeFile file: 'nginx/conf.d/default.conf', text: '''
+                        server {
+                            listen 80;
+                            server_name localhost;
+                            
+                            location / {
+                                proxy_pass http://api:8000;
+                                proxy_set_header Host $host;
+                                proxy_set_header X-Real-IP $remote_addr;
+                                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                                proxy_set_header X-Forwarded-Proto $scheme;
+                            }
+                        }
                     '''
                 }
             }
@@ -40,7 +47,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    // Build the Docker image
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
         }
@@ -48,8 +56,8 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Add your test commands here
                     sh 'echo "Running tests..."'
+                    // Add your test commands here
                 }
             }
         }
@@ -71,10 +79,8 @@ pipeline {
     
     post {
         always {
-            // Clean up old images
+            // Clean up
             sh 'docker system prune -f'
-            
-            // Clean workspace
             cleanWs()
         }
     }
