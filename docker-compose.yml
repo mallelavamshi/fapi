@@ -14,7 +14,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "80:80"
+      - "8081:80"  # Maps container's port 80 to external port 8081 to avoid conflicts
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
