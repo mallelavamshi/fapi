@@ -1,0 +1,162 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.project
+.pydevproject
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Application specific
+*.log
+logs/
+temp/
+tmp/
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# SSL Certificates
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.priv
+nginx/ssl/
+
+# Generated files
+*.xlsx
+*.pdf
+*.csv
+output/
+downloads/
+
+# Jenkins
+.jenkins/
+jenkins_home/
+
+# Test coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Backup files
+*.bak
+*.backup
+*~
+*.swp
+
+# Environment variables
+.env.*
+*.env
+
+# Local development settings
+local_settings.py
+settings_local.py
+
+# Media files
+media/
+uploads/
+
+# Static files
+static/
+staticfiles/
+
+# Database
+*.db
+*.sqlite3
+*.sqlite
+
+# Compiled files
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Packages
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Node modules (if using any JavaScript)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+
+# System Files
+.directory
+*.deb
