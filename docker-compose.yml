@@ -3,20 +3,26 @@ version: '3.8'
 services:
   api:
     build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./app:/app/app
+    expose:
+      - "8000"
     environment:
       - DIFY_API_KEY=${DIFY_API_KEY}
+    networks:
+      - app_network
     restart: unless-stopped
 
   nginx:
     image: nginx:latest
     ports:
-      - "8081:80"  # Maps container's port 80 to external port 8081 to avoid conflicts
+      - "80:80"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
     depends_on:
       - api
+    networks:
+      - app_network
     restart: unless-stopped
+
+networks:
+  app_network:
+    driver: bridge
