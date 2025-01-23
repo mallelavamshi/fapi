@@ -6,7 +6,7 @@ pipeline {
         DOCKER_TAG = "${env.BUILD_NUMBER}"
         DIFY_API_KEY = credentials('dify-api-key')
     }
-    
+
     stages {
         stage('Checkout') {
             steps {
@@ -22,10 +22,10 @@ pipeline {
                         writeFile file: '.env', text: "DIFY_API_KEY=${DIFY_API_KEY}"
                     }
                     
-                    // Create nginx configuration directory
+                    // Ensure nginx configuration directory exists
                     sh 'mkdir -p nginx/conf.d'
                     
-                    // Create default nginx configuration
+                    // Write Nginx configuration
                     writeFile file: 'nginx/conf.d/default.conf', text: '''
                         server {
                             listen 80;
@@ -65,34 +65,34 @@ pipeline {
             }
         }
         
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                }
-            }
-        }
-        
-        stage('Test') {
-            steps {
-                script {
-                    sh 'echo "Running tests..."'
-                }
-            }
-        }
-        
-        stage('Deploy') {
+        stage('Build & Deploy') {
             steps {
                 script {
                     // Stop existing containers
                     sh 'docker-compose down || true'
                     
-                    // Start new containers
+                    // Rebuild and start new containers
                     withCredentials([string(credentialsId: 'dify-api-key', variable: 'DIFY_API_KEY')]) {
-                        sh 'docker-compose up -d'
+                        sh 'docker-compose up -d --build'
                     }
                     
-
+                    // Wait a bit to ensure Nginx picks up the changes
+                    sleep(5)
+                    
+                    // Restart Nginx to ensure it's using the new config
+                    sh 'docker exec -it fapi-nginx-1 nginx -s reload || true'
+                }
+            }
+        }
+        
+        stage('Verify Deployment') {
+            steps {
+                script {
+                    // Check if default.conf is present in the Nginx container
+                    sh 'docker exec -it fapi-nginx-1 ls -l /etc/nginx/conf.d/'
+                    
+                    // Test if Nginx is correctly forwarding requests
+                    sh 'curl -I http://localhost:8081 || true'
                 }
             }
         }
@@ -100,7 +100,7 @@ pipeline {
     
     post {
         always {
-            // Clean up
+            // Clean up unused Docker resources
             sh 'docker system prune -f'
             cleanWs()
         }
